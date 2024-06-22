@@ -44,8 +44,8 @@ class ExtraTreesClassifier(ClassifierMixin, BaseAlgo):
         from codec.codecs import SimpleObjectCodec, TreeCodec
         codecs_manager.add_codec('algos_contrib.ExtraTreesClassifier',
                                  'ExtraTreesClassifier', SimpleObjectCodec)
-        codecs_manager.add_codec('sklearn.ensemble.forest',
+        codecs_manager.add_codec('sklearn.ensemble._forest',
                                  'ExtraTreesClassifier', SimpleObjectCodec)
-        codecs_manager.add_codec('sklearn.tree.tree', 'ExtraTreeClassifier',
+        codecs_manager.add_codec('sklearn.tree._classes', 'ExtraTreeClassifier',
                                  SimpleObjectCodec)
         codecs_manager.add_codec('sklearn.tree._tree', 'Tree', TreeCodec)
