@@ -15,20 +15,34 @@ class AdaBoostRegressor(RegressorMixin, BaseAlgo):
         params = options.get('params', {})
         out_params = convert_params(
             params,
-            strs=['loss', 'max_features'],
+            strs=['loss'],
             floats=['learning_rate'],
-            ints=['n_estimators'],
+            ints=['random_state','n_estimators'],
         )
 
         self.estimator = _AdaBoostRegressor(**out_params)
 
-
+    def summary(self, options):
+        if len(options) != 2:  # only model name and mlspl_limits
+            raise RuntimeError(
+                '"%s" models do not take options for summarization' % self.__class__.__name__
+            )
+        df = DataFrame(
+            {'feature': self.columns, 'importance': self.estimator.feature_importances_.ravel()}
+        )
+        return df
+        
     @staticmethod
     def register_codecs():
         from codec.codecs import SimpleObjectCodec, TreeCodec
 
-        codecs_manager.add_codec('algos.AdaBoostRegressor', 'AdaBoostRegressor', SimpleObjectCodec)
-        codecs_manager.add_codec('sklearn.ensemble.classes', 'AdaBoostRegressor', SimpleObjectCodec)
-        codecs_manager.add_codec('sklearn.tree.tree', 'DecisionTreeRegressor', SimpleObjectCodec)
-        codecs_manager.add_codec('sklearn.ensemble.weight_boosting', 'AdaBoostRegressor', SimpleObjectCodec)
+        codecs_manager.add_codec(
+            'algos_contrib.AdaBoostRegressor', 'AdaBoostRegressor', SimpleObjectCodec
+        )
+        codecs_manager.add_codec(
+            'sklearn.ensemble._weight_boosting', 'AdaBoostRegressor', SimpleObjectCodec
+        )
+        codecs_manager.add_codec(
+            'sklearn.tree._classes', 'DecisionTreeRegressor', SimpleObjectCodec
+        )
         codecs_manager.add_codec('sklearn.tree._tree', 'Tree', TreeCodec)
