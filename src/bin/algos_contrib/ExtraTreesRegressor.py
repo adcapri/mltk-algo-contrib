@@ -23,12 +23,23 @@ class ExtraTreesRegressor(RegressorMixin, BaseAlgo):
 
         self.estimator = _ExtraTreesRegressor(**out_params)
 
-
+    def summary(self, options):
+        if len(options) != 2:  # only model name and mlspl_limits
+            raise RuntimeError('"%s" models do not take options for summarization' % self.__class__.__name__)
+        df = DataFrame({
+            'feature': self.columns,
+            'importance': self.estimator.feature_importances_.ravel()
+        })
+        return df
+        
     @staticmethod
     def register_codecs():
         from codec.codecs import SimpleObjectCodec, TreeCodec
 
-        codecs_manager.add_codec('algos.ExtraTreesRegressor', 'ExtraTreesRegressor', SimpleObjectCodec)
-        codecs_manager.add_codec('sklearn.ensemble.forest', 'ExtraTreesRegressor', SimpleObjectCodec)
-        codecs_manager.add_codec('sklearn.tree.tree', 'ExtraTreeRegressor', SimpleObjectCodec)
+        codecs_manager.add_codec('algos_contrib.ExtraTreesRegressor',
+                                 'ExtraTreesRegressor', SimpleObjectCodec)
+        codecs_manager.add_codec('sklearn.ensemble._forest',
+                                 'ExtraTreesRegressor', SimpleObjectCodec)
+        codecs_manager.add_codec('sklearn.tree._classes', 'ExtraTreeRegressor',
+                                 SimpleObjectCodec)
         codecs_manager.add_codec('sklearn.tree._tree', 'Tree', TreeCodec)
